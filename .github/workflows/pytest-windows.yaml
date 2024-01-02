@@ -29,6 +29,23 @@ jobs:
       - name: Test with pytest
         run: |
           poetry run pytest
+  deploy:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build package
+        run: python -m build
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+            name: package
+            path: "*.exe"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create new patch release
+        run: .github/scripts/release.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           
           
             
